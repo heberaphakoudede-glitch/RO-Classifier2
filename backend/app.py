@@ -4,8 +4,10 @@ import pickle
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
+from flask_cors import CORS  # ✅ Ajout pour CORS
 
 app = Flask(__name__)
+CORS(app)  # ✅ Active CORS pour toutes les routes
 
 MODEL_FILE = "model.pkl"
 VECTORIZER_FILE = "vectorizer.pkl"
