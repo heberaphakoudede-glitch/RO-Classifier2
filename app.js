@@ -12,7 +12,7 @@ async function analyze() {
     resultElement.innerText = ''; // Efface le texte précédent
 
     try {
-        const response = await fetch('https://TON-BACKEND.onrender.com/predict', {
+        const response = await fetch('https://ro-classifier2.onrender.com/predict', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ description: desc })
