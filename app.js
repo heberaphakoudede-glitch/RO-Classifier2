@@ -14,15 +14,10 @@ async function analyze() {
             body: JSON.stringify({ description: desc })
         });
 
-        if (!response.ok) {
-            resultElement.innerText = 'Erreur serveur : ' + response.status;
-            return;
-        }
-
         const data = await response.json();
         resultElement.innerText = data.error
             ? 'Erreur : ' + data.error
-            : 'Règle d’Or prédite : ' + data.predicted_rule;
+            : '✅ Règle d’Or prédite : ' + data.predicted_rule;
     } catch (error) {
         resultElement.innerText = 'Impossible de contacter le serveur.';
         console.error(error);
