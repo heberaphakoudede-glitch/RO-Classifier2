@@ -1,11 +1,15 @@
 async function analyze() {
     const desc = document.getElementById('description').value;
     const resultElement = document.getElementById('result');
+    const loader = document.getElementById('loader');
 
     if (!desc.trim()) {
         resultElement.innerText = 'Veuillez entrer une description.';
         return;
     }
+
+    loader.style.display = 'block'; // Affiche le loader
+    resultElement.innerText = ''; // Efface le texte précédent
 
     try {
         const response = await fetch('https://TON-BACKEND.onrender.com/predict', {
@@ -21,5 +25,7 @@ async function analyze() {
     } catch (error) {
         resultElement.innerText = 'Impossible de contacter le serveur.';
         console.error(error);
+    } finally {
+        loader.style.display = 'none'; // Cache le loader
     }
 }
