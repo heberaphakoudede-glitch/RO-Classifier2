@@ -1,4 +1,3 @@
-/* Style global */
 body {
     font-family: 'Segoe UI', Tahoma, sans-serif;
     background: linear-gradient(135deg, #2c3e50, #3498db);
@@ -11,7 +10,6 @@ body {
     height: 100vh;
 }
 
-/* Container principal */
 .container {
     background: rgba(255, 255, 255, 0.1);
     padding: 30px;
@@ -22,20 +20,17 @@ body {
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
 }
 
-/* Titre */
 h1 {
     font-size: 28px;
     margin-bottom: 10px;
 }
 
-/* Sous-titre */
 .subtitle {
     font-size: 16px;
     margin-bottom: 20px;
     color: #ecf0f1;
 }
 
-/* Champ input */
 input {
     width: 100%;
     padding: 12px;
@@ -46,7 +41,6 @@ input {
     outline: none;
 }
 
-/* Bouton */
 button {
     background-color: #e67e22;
     color: #fff;
@@ -62,9 +56,25 @@ button:hover {
     background-color: #d35400;
 }
 
-/* Résultat */
 #result {
     margin-top: 20px;
     font-weight: bold;
     font-size: 18px;
     color: #2ecc71;
+}
+
+/* Loader animé */
+.loader {
+    border: 6px solid #f3f3f3;
+    border-top: 6px solid #e67e22;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 20px auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
