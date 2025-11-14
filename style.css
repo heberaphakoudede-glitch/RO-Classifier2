@@ -1,4 +1,70 @@
-body { font-family: Arial; background-color: #f4f6f8; margin: 0; padding: 0; }
-header { background-color: #007BFF; color: white; text-align: center; padding: 20px; }
-textarea { width: 100%; padding: 10px; margin-top: 10px; border-radius: 4px; }
-button { margin-top: 10px; padding: 12px; background-color: #007BFF; color: white; border: none; cursor: pointer; }
+/* Style global */
+body {
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    background: linear-gradient(135deg, #2c3e50, #3498db);
+    color: #fff;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* Container principal */
+.container {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 30px;
+    border-radius: 12px;
+    text-align: center;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+/* Titre */
+h1 {
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+
+/* Sous-titre */
+.subtitle {
+    font-size: 16px;
+    margin-bottom: 20px;
+    color: #ecf0f1;
+}
+
+/* Champ input */
+input {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    outline: none;
+}
+
+/* Bouton */
+button {
+    background-color: #e67e22;
+    color: #fff;
+    border: none;
+    padding: 12px 20px;
+    font-size: 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+button:hover {
+    background-color: #d35400;
+}
+
+/* Résultat */
+#result {
+    margin-top: 20px;
+    font-weight: bold;
+    font-size: 18px;
+    color: #2ecc71;
