@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RO ANALYSER KP</title>
-    style.css
+    <!-- Lien vers le fichier CSS -->
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
@@ -13,9 +14,14 @@
 
         <input type="text" id="description" placeholder="Exemple : Entrée dans une capacité sans certificat d’espace confiné">
         <button onclick="analyze()">Analyser</button>
+
+        <!-- Loader animé -->
+        <div id="loader" class="loader" style="display:none;"></div>
+
         <p id="result">Entrez une description et cliquez sur Analyser.</p>
     </div>
 
-    app.js</script>
+    <!-- Lien vers le fichier JS -->
+    <script src="app.js"></script>
 </body>
 </html>
