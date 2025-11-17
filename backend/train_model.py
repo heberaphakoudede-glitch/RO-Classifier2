@@ -7,7 +7,7 @@ import pickle
 
 # ✅ Étape 1 : Charger et corriger le fichier incidents.csv
 print("🔍 Vérification et correction du fichier incidents.csv...")
-df = pd.read_csv('incidents.csv', error_bad_lines=False, quoting=3)
+df = pd.read_csv('incidents.csv', on_bad_lines='skip', quoting=3)
 
 # Garder uniquement les deux colonnes
 df = df.iloc[:, :2]
