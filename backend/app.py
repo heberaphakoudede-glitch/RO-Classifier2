@@ -4,13 +4,14 @@ import pickle
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
-from flask_cors import CORS  # ✅ Ajout pour CORS
+from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app)  # ✅ Active CORS pour toutes les routes
+CORS(app)
 
 MODEL_FILE = "model.pkl"
 VECTORIZER_FILE = "vectorizer.pkl"
+MLB_FILE = "mlb.pkl"
 DATA_FILE = "incidents.csv"
 CLEAN_FILE = "incidents_clean.csv"
 
@@ -20,45 +21,57 @@ def retrain_model():
         return "❌ Fichier incidents.csv introuvable.", False
 
     # Charger et nettoyer les données
-    df = pd.read_csv(DATA_FILE)
-    df = df.iloc[:, :2]  # garder les deux premières colonnes
+    df = pd.read_csv(DATA_FILE, error_bad_lines=False, quoting=3)
+    df = df.iloc[:, :2]
     df.columns = ['description', 'rule']
     df.dropna(subset=['description', 'rule'], inplace=True)
     df.drop_duplicates(inplace=True)
     df['description'] = df['description'].astype(str).str.strip()
-    df['rule'] = df['rule'].astype(str).str.strip().str.upper()
+    df['rule'] = df['rule'].astype(str).str.strip()
+    df['rule'] = df['rule'].apply(lambda x: [r.strip().upper() for r in str(x).split(',')])
 
-    # Sauvegarder le fichier nettoyé
     df.to_csv(CLEAN_FILE, index=False)
 
-    # Réentraîner le modèle
+    # Réentraîner le modèle multi-label
     X = df['description']
     y = df['rule']
+
+    from sklearn.preprocessing import MultiLabelBinarizer
+    from sklearn.multiclass import OneVsRestClassifier
+
+    mlb = MultiLabelBinarizer()
+    y_encoded = mlb.fit_transform(y)
+
     vectorizer = TfidfVectorizer()
     X_vec = vectorizer.fit_transform(X)
-    model = LogisticRegression()
-    model.fit(X_vec, y)
 
-    # Sauvegarder le modèle et le vectorizer
+    model = OneVsRestClassifier(LogisticRegression(max_iter=1000))
+    model.fit(X_vec, y_encoded)
+
+    # Sauvegarde
     with open(MODEL_FILE, "wb") as f:
         pickle.dump(model, f)
     with open(VECTORIZER_FILE, "wb") as f:
         pickle.dump(vectorizer, f)
+    with open(MLB_FILE, "wb") as f:
+        pickle.dump(mlb, f)
 
-    return f"✅ Réentraînement terminé avec {len(df)} lignes.", True
+    return f"✅ Réentraînement multi-label terminé avec {len(df)} lignes.", True
 
 # ✅ Vérifier si les fichiers existent, sinon entraîner le modèle
-if not os.path.exists(MODEL_FILE) or not os.path.exists(VECTORIZER_FILE):
+if not os.path.exists(MODEL_FILE) or not os.path.exists(VECTORIZER_FILE) or not os.path.exists(MLB_FILE):
     print("⚠ Fichiers .pkl manquants. Entraînement du modèle...")
     retrain_model()
 else:
     print("✅ Fichiers .pkl trouvés. Chargement du modèle...")
 
-# Charger le modèle et le vectorizer
+# Charger le modèle, vectorizer et encodeur
 with open(MODEL_FILE, "rb") as f:
     model = pickle.load(f)
 with open(VECTORIZER_FILE, "rb") as f:
     vectorizer = pickle.load(f)
+with open(MLB_FILE, "rb") as f:
+    mlb = pickle.load(f)
 
 @app.route("/predict", methods=["POST"])
 def predict():
@@ -68,10 +81,10 @@ def predict():
         return jsonify({"error": "Description manquante"}), 400
 
     X_vec = vectorizer.transform([description])
-    prediction = model.predict(X_vec)[0]
-    return jsonify({"predicted_rule": prediction})
+    y_pred = model.predict(X_vec)
+    rules = mlb.inverse_transform(y_pred)[0]  # Liste des règles
+    return jsonify({"predicted_rules": rules})
 
-# ✅ Nouvelle route pour réentraîner
 @app.route("/retrain", methods=["POST"])
 def retrain():
     message, status = retrain_model()
