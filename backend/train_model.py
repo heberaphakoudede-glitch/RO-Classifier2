@@ -7,7 +7,7 @@ import pickle
 
 # ✅ Étape 1 : Charger et corriger le fichier incidents.csv
 print("🔍 Vérification et correction du fichier incidents.csv...")
-df = pd.read_csv('incidents.csv', on_bad_lines='skip', quoting=3)
+df = pd.read_csv('incidents.csv', on_bad_lines='skip', quoting=csv.QUOTE_NONE
 
 # Garder uniquement les deux colonnes
 df = df.iloc[:, :2]
@@ -30,7 +30,7 @@ print(f"✅ Fichier corrigé avec {len(df)} lignes.")
 
 # ✅ Étape 2 : Entraînement du modèle multi-label
 print("⚙ Entraînement du modèle multi-label...")
-X = df['description']
+X = df['description'] 
 y = df['rule']
 
 # Encoder les règles
