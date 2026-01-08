@@ -44,4 +44,3 @@ jobs:
           add-paths: |
             backend/model.pkl
             backend/vectorizer.pkl
-``
