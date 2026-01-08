@@ -1,6 +1,6 @@
 
 // ======= CONFIG =======
-const API_BASE = 'https://ro-classifier2.onrender.com'; // ex: https://ro-classifier-backend.onrender.com
+const API_BASE = 'https://ro-classifier2.onrender.com'; // URL backend corrigée
 
 // ======= NAV =======
 const drawer = document.getElementById('drawer');
@@ -119,51 +119,3 @@ async function processData(){
     exp.style.marginTop='10px';
     exp.innerHTML = `
       <a class="primary" href="${API_BASE}/export/excel/${d.job_id}" target="_blank">Exporter en Excel</a>
-      <a class="primary" href="${API_BASE}/export/ppt/${d.job_id}" target="_blank">Exporter en PPT</a>`;
-    preview.appendChild(exp);
-
-    refreshStats();
-  }catch(e){ showLoader(false); document.getElementById('btnAnalyze').disabled = false; msg.textContent = 'Erreur réseau.'; }
-}
-
-// ======= Files listing / deletion =======
-async function loadFiles(kind='processed', btn=null){
-  // set active
-  document.querySelectorAll('.subtab').forEach(b=>b.classList.remove('active'));
-  if(btn) btn.classList.add('active');
-
-  const target = document.getElementById(document.querySelector('.tab.visible').id==='global' ? 'globalTbody' : 'filesTbody');
-  target.innerHTML = '';
-  const msg = document.getElementById('msgFiles'); if(msg) msg.textContent='';
-
-  try{
-    const r = await fetch(`${API_BASE}/files?type=${kind}`);
-    const data = await r.json();
-    data.forEach(f=>{
-      const tr = document.createElement('tr');
-      const date = new Date(f.created_at).toLocaleString();
-      tr.innerHTML = `<td>${f.id}</td><td>${f.kind}</td><td>${f.filename}</td><td>${f.rows}</td><td>${date}</td>
-        <td>
-          ${f.kind==='processed' ? `<a class="primary" href="${API_BASE}/export/excel/${f.id}" target="_blank">Excel</a>
-                                     <a class="primary" href="${API_BASE}/export/ppt/${f.id}" target="_blank">PPT</a>` : ''}
-          <button onclick="deleteFile(${f.id})">Supprimer</button>
-        </td>`;
-      target.appendChild(tr);
-    });
-  }catch(e){
-    if(msg) msg.textContent = 'Erreur de chargement.';
-  }
-}
-
-async function deleteFile(id){
-  if(!confirm('Supprimer ce fichier et ses lignes ?')) return;
-  try{
-    const r = await fetch(`${API_BASE}/files/${id}`, {method:'DELETE'});
-    if(r.ok){ loadFiles('processed'); loadFiles('training'); refreshStats(); }
-  }catch(e){}
-}
-
-// ======= Template =======
-function downloadTemplate(){
-  window.open(`${API_BASE}/template`, '_blank');
-}
