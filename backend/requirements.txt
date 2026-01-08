@@ -1,6 +1,13 @@
+
 flask
 flask-cors
+pandas
 scikit-learn
 joblib
-pandas
+openpyxl
+python-pptx
+matplotlib
+sqlalchemy
+psycopg2-binary
 gunicorn
+pillow
