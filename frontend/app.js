@@ -1,6 +1,6 @@
 
 // ======= CONFIG =======
-const API_BASE = 'https://<YOUR_BACKEND_BASE_URL>'; // ex: https://ro-classifier-backend.onrender.com
+const API_BASE = 'https://ro-classifier2.onrender.com'; // ex: https://ro-classifier-backend.onrender.com
 
 // ======= NAV =======
 const drawer = document.getElementById('drawer');
