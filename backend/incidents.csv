@@ -1,134 +1,24 @@
-Description,rule
-Procédure de consignation non appliquée avant maintenance / Lockout procedure not applied before maintenance,RO1
-Le conducteur a dépassé la limite de vitesse / Driver exceeded speed limit on site road,RO2
-Flexibles mal rangés : risque de chute / Hoses poorly stored: fall risk,RO3
-Absence de signalisation / Missing signage,RO4
-Permis de travail manquant / Work permit missing,RO5
-Déversement d’huile / Oil spilled,RO6
-Panne d’éclairage / Lighting failure,RO7
-Entrée sans certificat espace confiné / Entering tank without confined space entry certificate,RO8
-Zone d’excavation non balisée / Excavation area not barricaded,RO9
-Travail en hauteur sans harnais / Working at height without harness,RO10
-Essai de pression sans barrières / Pressure test without barriers,RO11
-Ligne de tir non respectée / Line of fire not respected,RO12
-La gaine du cobra d'aération du VOID1C détachée sur certains points de fixation au cobra en plus elle présente plusieurs points de déchirure ce qui affecte la qualité d'air envoyé dans la capacité,RO8
-Lors du déplacement de bouteilles de gaz sur le dépôt un opérateur a utilisé une méthode inappropriée glissant les équipements au sol ce qui peut entraîner à un risque de chute d’objet,RO8
-Un luminaire posé au dessus de chemins de câbles par manque de support (Mezz GX704),RO8
-Équipements d’espace confiné laissés devant la fosse de réserve 2 alors qu’aucune entrée n’était en cours ni prévue (photo jointe),RO8
-Couvercle de la fosse de réserve 2 en place mais non boulonné,RO8
-Lors d’une entrée en espace confiné question posée sur le temps nécessaire pour que l’atmosphère testée circule dans tout le tuyau et soit détectée par les capteurs,RO8
-Cordon électrique jaune alimentant l’unité de filtration sous-marine non identifié Un nœud est fait au niveau des prises pour les maintenir ensemble (photo jointe – pont principal arrière),RO7
-Vérification électrique du LWD dans la zone de travail  espace très réduit entre les outils risque de blessure aux mains,RO7
-Échelle dans les salles électriques  présente pour permettre un accès rapide aux tableaux en cas d’urgence – à maintenir dans ces zones,RO7
-Échelles portables dans les compartiments électriques et salles de distribution  toutes hors date d’inspection selon les étiquettes,RO7
-Atelier de soudure (DJST) meuleuse isolée avec cadenas mais sans copie d’isolation – risque de confusion, RO7
-Atelier électrique (DJST) absence d’extincteur CO₂ le plus proche n’est pas adapté,RO7
-Atelier électrique (DJST) chiffon placé dans le haut-parleur PA à cause du volume trop élevé,RO7
-Fuite sur vanne d’eau incendie 69A, RO7
-Fuite sur raccord après la vanne du pistolet de lavage haute pression – pression purgée et raccord remplacé,RO7
-Déversement derrière l’unité de diagraphie  fuite du tuyau d’évacuation de l’évier,RO7
-Fuite au lavabo des toilettes chambre 442,RO7
-Fuite continue sur soupape de surpression de la pompe HP du générateur FW n°2 – remplissage constant du puisard, RO7
-Fuite d’eau sur une ligne avant une bride entre l’atelier de soudure et l’accès bâbord à la poupe Autre fuite sur une ligne réparée côté bâbord avant du bureau subsea (plafond) (photos jointes), RO7
-Fuite d’huile sur le générateur (moteur tribord),RO7
-Fuite sur vanne d’eau incendie 69A (répétée), RO7
-Opération de levage zone balisée mais un membre d’équipage a tenté de franchir sans autorisation,RO7
-Barrière oubliée côté bâbord du magasin de sacs – aucun levage en cours mais barrière toujours en place,RO7
-Membre d’équipage soulevant une charge >15 kg avec le dos courbé – risque de blessure lombaire,RO7
-Personne dans la ligne de feu en tentant de récupérer une goupille sous le crochet levé,RO7
-Éclairage d’urgence défectueux,RO7
-Poutre de levage non conforme au code couleur,RO6
-Boîtier électrique de meuleuse 12 endommagé,RO6
-Manque de scellé et goupille sur une douche portative située non loin des pompes GA (Proser),RO1
-Absence d'antiseptique dans la boîte first aid de la navette 549 JL 6,RO1
-Ceinture de sécurité de la navette 140 JL 6 endommagée, RO1
-La douche portative de la zone DS1200 manque de hourse de protection,RO6
-Une personne a été vue franchissant les barrières pendant une opération de levage – non-respect des zones interdites exposition au risque de chute de charge,RO6
-Un collègue a tenté de soulever seul un crossover lourd  ce qui est un non-respect des bonnes pratiques de manutention et qui peut entraîner à un risque de blessure dorsale,RO6
-Le capot du moteur de la capacité 35VZ2701D est très corrodé,RO1
-Bac de rétention drains ouverts bouchée DA 014,RO1
-ESDV 1002 vanne sortie huile DS 811B est bloquée ouverte et le cerveau moteur de la vanne est fortement corrodé et boulonnerie coupée,RO1
-I needed access to the pipe deck when lifting operations ongoing,RO6
-Choc au pied pendant des travaux de désherbage par manque de chaussures adaptés,RO4
-Projection d’huile hydraulique sur le visage d’un cariste sans EPI(visière) adaptés lors du checking journalier,RO4
-Hématome sur l'index gauche par manque de professionalisme dans l'utilisation du marteau,RO3
-Foreign body to the eye by lack of adapted security glasses,RO4
-One Subsea Operator got his palm of the hand pierced by a nail cause he did not have his gloves on,RO4
-Blessure d’un agent GNCAC dans la partie supérieure du bras gauche à proximité de l’aisselle pendant une opération de meulage,RO11
-Non-respect des panneaux d'interdiction pendant la faisabilité des tâches de nettoyage de HPCI par le personnel du MAG 1 APPRO,RO2
-Pendant le COSITE l présence des transpalettes non certifiées,RO5
-Fuite au niveau garniture mécanique de la vanne GX971C,RO7
-Il ya une fuite d'eau au niveau d'un lavabo dans les vestiaires d'en face du medic,RO7
-Non-respect du balisage par un agent de la société X dans la zone KITINA Je lui ai rappelé qu’il est strictement interdit de franchir un balisage sans autorisation quelle que soit la situation,RO2
-J'ai brandi une stop card a un passager qui a failli glisser sur la marches d'escalier du boatlanding qui portait les chaussures de ville avec des semelles non conformes,RO4
-Sur la TLP au Lower deck j'ai fait une Stop-card pour un agent de la société ponticelli entrain de réaliser une opération de rodage boulonnerie pour ouverture du trou d'homme de la cuve de stockage sans permis de travaille alors que l'équipe ne disposait que du permis de platinage / déplatinage,RO5
-En zone 20 deux agents sans les masques 3M sous les  ballons 2001 et 2002 (VD) entrain de pomper de l'eau pour le nettoyage remonté l'anomalie après avoir sensibilisé l'équipe,RO4     
-En zone 05 un agent a réalisé une opération de peinture en position allongée tout en portant uniquement des lunettes d’environnement,RO4
-Légère contusion à la main gauche ( face dorsale du 4 -ème métacarpe),RO1
-Légère contusion à la main gauche ( face dorsale du 4 -ème métacarpe),RO3
-Douleur à l'épaule d'un agent DC,RO1
-Douleur à l'épaule d'un agent DC,RO3
-Trouble auditif oreille gauche à l'issue d'une opération de plongée d'un agent PETRODIVE,RO1
-Effleurement d'un agent au niveau de l'avant-bras gauche par le câble RPS,RO1
-Effleurement d'un agent au niveau de l'avant-bras gauche par le câble RPS,RO12
-Blessure mineure au genou gauche d'un agent,RO1
-Blessure mineure au genou gauche d'un agent,RO3
-Brûlures au visage du bras et au niveau du torse,RO1
-Brûlures au visage du bras et au niveau du torse,RO11
-Brûlures au visage du bras et au niveau du torse,RO5
-Brûlures au visage du bras et au niveau du torse,RO7
-Brûlures au visage du bras et au niveau du torse,RO12
-Brûlures au visage du bras et au niveau du torse,RO8
-Rassemblement PCA suite à un malaise d'un agent YOKOGAWA,RO1
-Légère entaille sur le front d’un agent,RO1
-Eraflure au doigt suite à un coincement,RO1
-Projection de vapeurs d’hydrocarbure sur le visage d’un opérateur,RO1
-GLISSAGE D’UN PASSAGER AU BOAT LANDING TRIBORD DE NKP,RO1
-Légère entaille sur la lèvre supérieure,RO1
-Blessure au tibia gauche d'un agent BECA,RO1
-Sur NKP une blessure au niveau du tiers inferieur de l'avant-bras gauche d'un cuisinier,RO1
-Sur NKP une blessure au niveau du tiers inferieur de l'avant-bras gauche d'un cuisinier,RO4
-Projection de produits chimiques sur le visage d'un agent,RO1
-Projection de produits chimiques sur le visage d'un agent,RO7
-Projection de produits chimiques sur le visage d'un agent,RO4
-Coupure légère du doigt d'un laboratin,RO1
-Coupure légère du doigt d'un laboratin,RO4
-Brûlure thermique superficielle pendant le décoklge du four,RO1
-Brûlure thermique superficielle pendant le décokage du four,RO12
-Coupure du majeur de la main droite d'un membre de l'équipage du BE807,RO1
-Projection des gouttelettes de produit chimique DB20 (bactéricide) sur le visage d'un opérateur,RO1
-Projection des gouttelettes de produit chimique DB20 (bactéricide) sur le visage d'un opérateur,RO4
-Douleurs au niveau du genou droit et des deux mollets d’un passager pendant le débarquement du surfer vers la barge NKP,RO1
-Ecorchure de l'avant bras droit d'un agent pendant le démontage échafaudage,RO10
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Date,SACS ID N°,Description,Règles d'or attribué
+2025-10-01,SACS-001,Travail en hauteur sans ligne de vie,RO10
+2025-10-03,SACS-002,Circulation de véhicule sans balisage,RO2
+2025-10-10,SACS-003,Port des EPI non conforme,RO4
+2025-10-15,SACS-004,Situation à haut risque non balisée,RO1
+2025-10-20,SACS-005,Utilisation d'outil inadapté,RO3
+2025-10-25,SACS-006,Travail sans permis requis,RO5
+2025-11-01,SACS-007,Manoeuvre de levage sans élingue certifiée,RO6
+2025-11-05,SACS-008,Intervention sur système sous tension,RO7
+2025-11-10,SACS-009,Entrée en espace confiné sans ventilation,RO8
+2025-11-15,SACS-010,Excavation sans blindage,RO9
+2025-11-20,SACS-011,Travail en hauteur sans garde-corps,RO10
+2025-11-25,SACS-012,Soudure non protégée point chaud,RO11
+2025-11-30,SACS-013,Positionnement en ligne de tir,RO12
+2025-12-05,SACS-014,Port des EPI incomplet,RO4
+2025-12-10,SACS-015,Circulation piéton véhicule non séparée,RO2
+2025-12-15,SACS-016,Outil manuel défectueux,RO3
+2025-12-20,SACS-017,Permis de travail expiré,RO5
+2025-12-25,SACS-018,Levage avec angle de sangle dangereux,RO6
+2025-12-28,SACS-019,Coupure électrique non maîtrisée,RO7
+2025-12-29,SACS-020,Accès espace confiné sans surveillant,RO8
+2025-12-30,SACS-021,Zone à haut risque sans contrôle d'accès,RO1
+2025-12-31,SACS-022,Excavation proche réseau enterré non détecté,RO9
