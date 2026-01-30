@@ -1,10 +1,9 @@
-
 import os
 import io
 import uuid
 import datetime as dt
 
-from flask import Flask, request, jsonify, send_file
+from flask import Flask, request, jsonify, send_file, send_from_directory
 from flask_cors import CORS
 
 import pandas as pd
@@ -17,22 +16,16 @@ from sqlalchemy.exc import SQLAlchemyError
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 
-from pptx import Presentation
-from pptx.util import Inches, Pt
-
-import matplotlib
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
-
 from openpyxl import Workbook
 from openpyxl.drawing.image import Image as XLImage
 from openpyxl.styles import Font, Alignment, PatternFill, Border, Side
 
+
 # -----------------------------------------------------------
-# FLASK (TADILA)
+# FLASK
 # -----------------------------------------------------------
 app = Flask(__name__, static_folder="static", static_url_path="/static")
-CORS(app, resources={r"/*": {"origins": "*"}})
+CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 TOOL_NAME = "TADILA"
 TOOL_SIGLE = "TDL"
@@ -63,8 +56,8 @@ class DataRow(Base):
     date = Column(String(100))
     sacs_id = Column(String(100))
     description = Column(Text)
-    ro_label = Column(String(100))      # label réel (pour training) OU label attendu si connu
-    predicted_ro = Column(String(100))  # prédiction TADILA (pour processed)
+    ro_label = Column(String(100))      # réel (training) ou attendu
+    predicted_ro = Column(String(100))  # prediction (processed)
     kind = Column(String(20))           # "training" | "processed"
 
     file = relationship("FileRecord", back_populates="lines")
@@ -85,7 +78,8 @@ vectorizer = None
 REQUIRED_COLS = ["Date", "SACS ID N°", "Description", "Règles d'or attribué"]
 
 # -----------------------------------------------------------
-# REGLES D'OR + ICONES (placer vos PNG dans /static/icons/)
+# REGLES D'OR + ICONES
+# Put PNGs in: backend/static/icons/RO1.png ...
 # -----------------------------------------------------------
 RULES = {
     "RO1":  {"fr":"Situations à haut risque","en":"High-risk situations","icon":"/static/icons/RO1.png"},
@@ -147,13 +141,13 @@ def train_from_rows(texts, labels):
 def load_or_initialize_model():
     global model, vectorizer
 
-    # 1) PKL déjà présents
+    # 1) PKL
     if os.path.exists(MODEL_PATH) and os.path.exists(VECT_PATH):
         model = joblib.load(MODEL_PATH)
         vectorizer = joblib.load(VECT_PATH)
         return
 
-    # 2) Données d'entraînement en DB
+    # 2) DB
     with SessionLocal() as s:
         rows = s.query(DataRow).filter(DataRow.kind == "training").all()
         if rows:
@@ -173,26 +167,38 @@ def load_or_initialize_model():
             train_from_rows(texts, labels)
             return
 
-    # 4) Fallback (vide)
+    # 4) Empty fallback
     vectorizer = TfidfVectorizer()
     model = LogisticRegression(max_iter=2000)
 
 load_or_initialize_model()
 
 # -----------------------------------------------------------
-# ROUTES DE BASE
+# FRONTEND SERVING
 # -----------------------------------------------------------
 @app.get("/")
-def home():
-    return jsonify({"tool": TOOL_NAME, "sigle": TOOL_SIGLE, "status": "ok", "message": f"{TOOL_NAME} API running"})
+def serve_ui():
+    # serves backend/static/index.html
+    return send_from_directory(app.static_folder, "index.html")
 
-@app.get("/rules")
-def get_rules():
+# optional: allow /index.html too
+@app.get("/index.html")
+def serve_ui_index():
+    return send_from_directory(app.static_folder, "index.html")
+
+# -----------------------------------------------------------
+# API BASE
+# -----------------------------------------------------------
+@app.get("/api/health")
+def api_health():
+    return jsonify({"tool": TOOL_NAME, "sigle": TOOL_SIGLE, "status": "ok"})
+
+@app.get("/api/rules")
+def api_rules():
     return jsonify(RULES)
 
-@app.get("/template")
-def download_template():
-    # Modèle Excel (colonnes obligatoires)
+@app.get("/api/template")
+def api_template():
     output = io.BytesIO()
     wb = Workbook()
     ws = wb.active
@@ -202,21 +208,50 @@ def download_template():
     output.seek(0)
     return send_file(output, download_name="template_TADILA.xlsx", as_attachment=True)
 
+@app.get("/api/stats")
+def api_stats():
+    with SessionLocal() as s:
+        training_rows = s.query(DataRow).filter(DataRow.kind == "training").count()
+        processed_rows = s.query(DataRow).filter(DataRow.kind == "processed").count()
+    return jsonify({"training_rows": training_rows, "processed_rows": processed_rows})
+
+@app.get("/api/files")
+def api_files():
+    kind = request.args.get("kind", "").strip().lower()
+    if kind not in ("training", "processed"):
+        return jsonify({"error": "Query param 'kind' must be 'training' or 'processed'"}), 400
+
+    with SessionLocal() as s:
+        files = (
+            s.query(FileRecord)
+            .filter(FileRecord.kind == kind)
+            .order_by(FileRecord.created_at.desc())
+            .all()
+        )
+
+    out = []
+    for f in files:
+        out.append({
+            "id": f.id,
+            "kind": f.kind,
+            "filename": f.filename,
+            "rows": f.rows,
+            "created_at": f.created_at.isoformat() + "Z" if f.created_at else None
+        })
+
+    return jsonify({"status": "ok", "files": out})
+
 # -----------------------------------------------------------
-# UPLOAD ENTRAINEMENT
+# UPLOAD TRAINING
 # -----------------------------------------------------------
-@app.post("/upload-training")
-def upload_training():
-    """
-    Import Excel (xlsx) avec colonnes obligatoires.
-    Stocke en DB (kind='training'), réentraîne, met à jour les PKL et le modèle en mémoire.
-    """
+@app.post("/api/upload-training")
+def api_upload_training():
     file = request.files.get("file")
     if not file:
         return jsonify({"error": "Aucun fichier fourni"}), 400
 
     try:
-        df = pd.read_excel(file)  # nécessite openpyxl
+        df = pd.read_excel(file)
     except Exception as e:
         return jsonify({"error": f"Lecture Excel impossible: {e}"}), 400
 
@@ -229,14 +264,14 @@ def upload_training():
             "trouvees": list(df.columns)
         }), 400
 
-    # Enregistrer le fichier (métadonnées)
-    stored_name = f"training_{uuid.uuid4().hex}.xlsx"
     inserted = 0
     try:
         with SessionLocal() as s:
-            f = FileRecord(kind="training", filename=getattr(file, "filename", "upload.xlsx"), stored_name=stored_name)
+            f = FileRecord(kind="training", filename=getattr(file, "filename", "upload.xlsx"),
+                           stored_name=f"training_{uuid.uuid4().hex}.xlsx")
             s.add(f)
             s.flush()
+
             for _, row in df.iterrows():
                 s.add(DataRow(
                     file_id=f.id,
@@ -247,32 +282,29 @@ def upload_training():
                     kind="training"
                 ))
                 inserted += 1
+
             f.rows = inserted
             s.commit()
-    except SQLAlchemyError as e:
-        return jsonify({"error": f"Insertion DB échouée: {e}"}), 500
 
-    # Réentraîner
-    try:
+        # retrain from all training rows
         with SessionLocal() as s:
             rows = s.query(DataRow).filter(DataRow.kind == "training").all()
             texts  = [r.description or "" for r in rows]
             labels = [r.ro_label or "" for r in rows]
         train_from_rows(texts, labels)
+
+    except SQLAlchemyError as e:
+        return jsonify({"error": f"Insertion DB échouée: {e}"}), 500
     except Exception as e:
         return jsonify({"error": f"Réentraînement échoué: {e}"}), 500
 
     return jsonify({"status": "ok", "message": "Importation successfully", "inserted_rows": inserted})
 
 # -----------------------------------------------------------
-# TRAITEMENT (analyse d'un Excel erroné)
+# PROCESS DATA
 # -----------------------------------------------------------
-@app.post("/process-data")
-def process_data():
-    """
-    Import d'un Excel 'source' à analyser (prédire la RO).
-    Retourne file_id (job), et stocke en DB (kind='processed').
-    """
+@app.post("/api/process-data")
+def api_process_data():
     file = request.files.get("file")
     if not file:
         return jsonify({"error": "Aucun fichier fourni"}), 400
@@ -298,16 +330,17 @@ def process_data():
     except Exception as e:
         return jsonify({"error": f"Analyse impossible: {e}"}), 500
 
-    # Sauvegarde en DB
-    stored_name = f"processed_{uuid.uuid4().hex}.xlsx"
     inserted = 0
     file_id = None
+
     try:
         with SessionLocal() as s:
-            f = FileRecord(kind="processed", filename=getattr(file, "filename", "source.xlsx"), stored_name=stored_name)
+            f = FileRecord(kind="processed", filename=getattr(file, "filename", "source.xlsx"),
+                           stored_name=f"processed_{uuid.uuid4().hex}.xlsx")
             s.add(f)
             s.flush()
             file_id = f.id
+
             for i, row in df.iterrows():
                 s.add(DataRow(
                     file_id=f.id,
@@ -319,21 +352,40 @@ def process_data():
                     kind="processed"
                 ))
                 inserted += 1
+
             f.rows = inserted
             s.commit()
+
     except SQLAlchemyError as e:
         return jsonify({"error": f"Sauvegarde DB échouée: {e}"}), 500
 
-    return jsonify({"status": "ok", "file_id": file_id, "inserted_rows": inserted})
+    # Build preview (first 50 rows)
+    preview = []
+    for i in range(min(50, len(df))):
+        ro = str(preds[i]).strip()
+        icon = RULES.get(ro, {}).get("icon", "")
+        preview.append({
+            "Date": str(df.iloc[i].get(date_col, "")),
+            "SACS ID N°": str(df.iloc[i].get(sacs_col, "")),
+            "Description": str(df.iloc[i].get(desc_col, "")),
+            "RO_predite": ro,
+            "RO_icon": icon
+        })
+
+    return jsonify({
+        "status": "ok",
+        "file_id": file_id,
+        "job_id": file_id,              # alias for compatibility
+        "rows": inserted,               # what frontend expects
+        "inserted_rows": inserted,      # also keep original
+        "preview": preview
+    })
 
 # -----------------------------------------------------------
-# EXPORT EXCEL (avec icônes)
+# EXPORT EXCEL
 # -----------------------------------------------------------
-@app.get("/export/excel/<int:file_id>")
-def export_excel(file_id):
-    """
-    Export du fichier 'processed' vers Excel avec icônes RO insérées.
-    """
+@app.get("/api/export/excel/<int:file_id>")
+def api_export_excel(file_id):
     with SessionLocal() as s:
         f = s.query(FileRecord).filter(FileRecord.id == file_id, FileRecord.kind == "processed").first()
         if not f:
@@ -347,11 +399,11 @@ def export_excel(file_id):
     headers = ["Date", "SACS ID N°", "Description", "RO (attendu)", "RO (prédit)", "Icône"]
     ws.append(headers)
 
-    # style en-têtes
     header_font = Font(bold=True, color="FFFFFF")
-    header_fill = PatternFill("solid", fgColor="009543")  # vert Congo
+    header_fill = PatternFill("solid", fgColor="009543")
     thin = Side(style="thin", color="BBBBBB")
     border = Border(left=thin, right=thin, top=thin, bottom=thin)
+
     for col in range(1, len(headers) + 1):
         cell = ws.cell(row=1, column=col)
         cell.font = header_font
@@ -359,7 +411,6 @@ def export_excel(file_id):
         cell.alignment = Alignment(horizontal="center", vertical="center")
         cell.border = border
 
-    # lignes + icônes
     r = 2
     for line in rows:
         ws.append([
@@ -368,18 +419,38 @@ def export_excel(file_id):
             line.description or "",
             line.ro_label or "",
             line.predicted_ro or "",
-            ""  # placeholder Icône
+            ""
         ])
+
         ro = (line.predicted_ro or "").strip()
         icon_rel = RULES.get(ro, {}).get("icon")
         if icon_rel:
+            # icon_rel: /static/icons/RO1.png
             icon_abs = os.path.join(BASE_DIR, icon_rel.lstrip("/"))
             if os.path.exists(icon_abs):
                 img = XLImage(icon_abs)
-                img.width, img.height = 20, 20  # petite icône
-                ws.add_image(img, f"F{r}")      # colonne 6 (Icône)
+                img.width, img.height = 20, 20
+                ws.add_image(img, f"F{r}")
         r += 1
 
-    # ajuster largeur
     ws.column_dimensions["A"].width = 14
     ws.column_dimensions["B"].width = 16
+    ws.column_dimensions["C"].width = 60
+    ws.column_dimensions["D"].width = 18
+    ws.column_dimensions["E"].width = 14
+    ws.column_dimensions["F"].width = 10
+
+    output = io.BytesIO()
+    wb.save(output)
+    output.seek(0)
+
+    return send_file(output, download_name=f"tadila_export_{file_id}.xlsx", as_attachment=True)
+
+# -----------------------------------------------------------
+# RUN
+# -----------------------------------------------------------
+if __name__ == "__main__":
+    port = int(os.getenv("PORT", "5000"))
+    app.run(host="0.0.0.0", port=port, debug=True)
+
+
